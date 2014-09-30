@@ -1,39 +1,26 @@
-Router.map(function() {
-  this.route('login');
-
-  this.route('list', {
-    path: '/list/',
-    data: function() {
-      return Lists.findOne();
-    }
-  });
-  
-  this.route('home', {
-    path: '/',
-    action: function() {
-      Lists.findOne();
-      Router.go('list');
-    }
-  });
-});
-
-Lists = new Meteor.Collection(null);
 if (Meteor.isClient) {
-  Lists.insert({name: 'Tom List'});
-}
+  var dep = new Tracker.Dependency;
 
-if (Meteor.isClient) {
-  Template.list.events({
-    'click [data-change]': function() {
-      // Lists.update(this._id, {$set: {foo: Random._id}});
-      Lists.update(this._id, {$set: {foo: Random._id}});
-    }
-  });
-  
-  Template.login.events({
-    'click [data-login]': function() {
-      Router.go('home');
-      // Router.go('home');
+  Router.map(function() {
+    this.route('a', {
+      action: function() {
+        dep.depend()
+        console.log('redirecting to b');
+        Router.go('b')
+      }
+    });
+
+    this.route('b', {
+      action: function() {
+        dep.depend()
+        console.log('running b');
+      }
+    });
+
+    change = function() {
+      dep.changed();
     }
   });
 }
+
+
